@@ -107,8 +107,8 @@ function addProductToStorage(product) {
 }
 
 // update the product after edit
-function updateProduct(receivedProduct) {
-  const updatedProducts = products.map((product) => {
+function updateProduct(receivedProduct, storageProducts = products) {
+  const updatedProducts = storageProducts.map((product) => {
     if (product.id === receivedProduct.id) {
       return {
         ...product,
@@ -122,6 +122,7 @@ function updateProduct(receivedProduct) {
   return updatedProducts;
 }
 
+// after clicking update btn
 function clearEditForm() {
   submitBtn.classList.remove("update-btn");
   submitBtn.classList.remove("btn-secondary");
@@ -135,15 +136,18 @@ let products = localStorage.getItem("storeProducts")
   : [];
 
 // update localStorage after edit
-function updateProductToStorage() {
+function updateProductToStorage(product) {
   //This is shortcut means I am updating this from my product(memory store)
-  localStorage.setItem("storeProducts", JSON.stringify(products));
+  // localStorage.setItem("storeProducts", JSON.stringify(products));
 
   //If I want, I can do it manually
-  /*--> At first, I have to find the existing product from localStorage
-  --> then update it with new product update
-  --> last, save it to localStorage
-  */
+  //--> At first, I have to find the existing product from localStorage
+  let products;
+  products = JSON.parse(localStorage.getItem("storeProducts"));
+  //--> then update it with new product update
+  products = updateProduct(product, products);
+  //--> last, save it to localStorage
+  localStorage.setItem("storeProducts", JSON.stringify(products));
 }
 
 // Handle form submission
@@ -178,7 +182,7 @@ function handleFormSubmission(e) {
     showProductsToUI(products);
 
     // update in localStorage
-    updateProductToStorage();
+    updateProductToStorage(product);
 
     //clearEditForm
     clearEditForm();
